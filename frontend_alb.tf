@@ -1,7 +1,7 @@
-# data "aws_acm_certificate" "react" {
-#   domain   = var.base_domain
-#   statuses = ["ISSUED"]
-# }
+data "aws_acm_certificate" "react" {
+  domain   = var.base_domain
+  statuses = ["ISSUED"]
+}
 
 resource "aws_alb" "alb_frontend" {
   name               = "${var.project}-${var.environment}-frontend"
@@ -32,28 +32,28 @@ resource "aws_lb_target_group" "tg_frontend" {
 
 }
 
-# resource "aws_lb_listener" "listener_frontend" {
-#   load_balancer_arn = aws_alb.alb_frontend.id
-#   port              = "80"
-#   protocol          = "HTTP"
-#
-#   default_action {
-#     type = "redirect"
-#
-#     redirect {
-#       port        = "443"
-#       protocol    = "HTTPS"
-#       status_code = "HTTP_301"
-#     }
-#   }
-# }
+resource "aws_lb_listener" "listener_frontend" {
+  load_balancer_arn = aws_alb.alb_frontend.id
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
 
 resource "aws_lb_listener" "listener_https_frontend" {
   load_balancer_arn = aws_alb.alb_frontend.id
   port              = "80"
   protocol          = "HTTP"
-  # ssl_policy        = "ELBSecurityPolicy-2016-08"
-  # certificate_arn   = data.aws_acm_certificate.react.arn
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = data.aws_acm_certificate.react.arn
 
   default_action {
     type             = "forward"
